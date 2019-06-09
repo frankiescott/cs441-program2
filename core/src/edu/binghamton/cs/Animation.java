@@ -2,25 +2,39 @@ package edu.binghamton.cs;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import static java.lang.Math.abs;
 
-public class Animation extends ApplicationAdapter implements InputProcessor {
+public class Animation extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
+	private Stage stage;
+
 	float x, y;
 	float dx, dy;
 	float w, h;
 	int imgWidth, imgHeight;
 	float gravity;
 
+	private Skin loadSkin() {
+		return new Skin(Gdx.files.internal("clean-crispy-ui.json"));
+	}
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		stage = new Stage(new ScreenViewport());
+		Gdx.input.setInputProcessor(stage);
+
 		img = new Texture("badlogic.jpg");
 		imgWidth = img.getWidth();
 		imgHeight = img.getHeight();
@@ -30,7 +44,26 @@ public class Animation extends ApplicationAdapter implements InputProcessor {
 		dy = 0;
 		gravity = -4;
 
-		Gdx.input.setInputProcessor(this);
+		renderJumpButton();
+	}
+
+	private void renderJumpButton() {
+		Button jump = new Button(loadSkin(),"default");
+		jump.setSize(100, 100);
+		jump.setPosition(5, 5);
+		jump.addListener(new InputListener(){
+			@Override
+			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+			}
+			@Override
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				if (dy == 0) {
+					dy = dy + 70;
+				}
+				return true;
+			}
+		});
+		stage.addActor(jump);
 	}
 
 	@Override
@@ -59,8 +92,10 @@ public class Animation extends ApplicationAdapter implements InputProcessor {
 		batch.begin();
 		batch.draw(img, x, y);
 		batch.end();
+		stage.act();
+		stage.draw();
 	}
-	
+
 	@Override
 	public void dispose () {
 		batch.dispose();
@@ -71,48 +106,5 @@ public class Animation extends ApplicationAdapter implements InputProcessor {
 	public void resize(int width, int height) {
 		w = width;
 		h = height;
-	}
-
-	@Override
-	public boolean keyDown(int keycode) {
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		if (dy == 0) {
-			dy = dy + 70;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int amount) {
-		return false;
 	}
 }
