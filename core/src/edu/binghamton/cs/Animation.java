@@ -9,19 +9,36 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class Animation extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
-	
+	float x, y;
+	float dx, dy;
+	float w, h;
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
+		x = 0;
+		y = 0;
+		dx = 5;
+		dy = 15;
 	}
 
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		x = x + dx;
+		y = y + dy;
+		if ((x > w) || (x < 0)) {
+			dx = -dx;
+		}
+		if ((y > h) || (y < 0)) {
+			dy = -dy;
+		}
+
 		batch.begin();
-		batch.draw(img, 0, 0);
+		batch.draw(img, x, y);
 		batch.end();
 	}
 	
@@ -29,5 +46,11 @@ public class Animation extends ApplicationAdapter {
 	public void dispose () {
 		batch.dispose();
 		img.dispose();
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		w = width;
+		h = height;
 	}
 }
