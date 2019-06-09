@@ -27,8 +27,8 @@ public class Animation extends ApplicationAdapter implements InputProcessor {
 		x = 0;
 		y = 0;
 		dx = 15;
-		dy = 25;
-		gravity = -5;
+		dy = 0;
+		gravity = -4;
 
 		Gdx.input.setInputProcessor(this);
 	}
@@ -38,7 +38,7 @@ public class Animation extends ApplicationAdapter implements InputProcessor {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		if ((y <= 5) && (abs(dy) <= 5)) {
+		if ((y <= 4) && (abs(dy) <= 4)) {
 			y = 0;
 			dy = 0;
 		} else {
@@ -90,7 +90,9 @@ public class Animation extends ApplicationAdapter implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		dy = dy + 50;
+		if (dy == 0) {
+			dy = dy + 70;
+		}
 		return true;
 	}
 
