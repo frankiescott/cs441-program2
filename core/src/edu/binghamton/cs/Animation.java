@@ -12,11 +12,14 @@ public class Animation extends ApplicationAdapter {
 	float x, y;
 	float dx, dy;
 	float w, h;
+	int imgWidth, imgHeight;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
+		imgWidth = img.getWidth();
+		imgHeight = img.getHeight();
 		x = 0;
 		y = 0;
 		dx = 5;
@@ -25,15 +28,15 @@ public class Animation extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		x = x + dx;
 		y = y + dy;
-		if ((x > w) || (x < 0)) {
+		if ((x > (w - imgWidth)) || (x < 0)) {
 			dx = -dx;
 		}
-		if ((y > h) || (y < 0)) {
+		if ((y > (h - imgHeight)) || (y < 0)) {
 			dy = -dy;
 		}
 
