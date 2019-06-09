@@ -28,7 +28,7 @@ public class Animation extends ApplicationAdapter implements InputProcessor {
 		y = 0;
 		dx = 15;
 		dy = 25;
-		gravity = -3;
+		gravity = -5;
 
 		Gdx.input.setInputProcessor(this);
 	}
@@ -38,7 +38,7 @@ public class Animation extends ApplicationAdapter implements InputProcessor {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		if ((y < 3) && (abs(dy) < 3)) {
+		if ((y <= 5) && (abs(dy) <= 5)) {
 			y = 0;
 			dy = 0;
 		} else {
@@ -51,8 +51,9 @@ public class Animation extends ApplicationAdapter implements InputProcessor {
 		if ((x > (w - imgWidth)) || (x < 0)) {
 			dx = -dx;
 		}
-		if ((y > (h - imgHeight)) || (y < 0)) {
-			dy = -dy * (float) 0.9;
+		if (y < 0) {
+			dy = 0;
+			y = 0;
 		}
 
 		batch.begin();
