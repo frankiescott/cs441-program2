@@ -9,7 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import static java.lang.Math.abs;
@@ -44,17 +47,36 @@ public class Animation extends ApplicationAdapter {
 		dy = 0;
 		gravity = -4;
 
-		renderJumpButton();
+		configureControlInterface();
 	}
 
-	private void renderJumpButton() {
-		Button jump = new Button(loadSkin(),"default");
-		jump.setSize(100, 100);
+	private void configureControlInterface() {
+		Skin skin = loadSkin();
+		int rowHeight = Gdx.graphics.getWidth() / 12;
+		int colWidth = Gdx.graphics.getWidth() / 12;
+
+		Button jump = new TextButton("Jump", skin,"arcade");
+		jump.setSize(colWidth*2, rowHeight*2);
 		jump.setPosition(5, 5);
+		((TextButton) jump).getLabel().setFontScale(3);
+
+		Button incv = new TextButton("^", skin, "arcade");
+		incv.setSize(colWidth*2, rowHeight*2);
+		incv.setPosition(colWidth*10, 5 + rowHeight*2);
+		((TextButton) incv).getLabel().setFontScale(3);
+
+		Button decv = new TextButton("v", skin, "arcade");
+		decv.setSize(colWidth*2, rowHeight*2);
+		decv.setPosition(colWidth*10, 5);
+		((TextButton) decv).getLabel().setFontScale(3);
+
+		final Label title = new Label("Velocity: " + abs(dx), skin,"default");
+		title.setSize(Gdx.graphics.getWidth(),rowHeight*2);
+		title.setPosition(0,Gdx.graphics.getHeight() - rowHeight*2);
+		title.setAlignment(Align.center);
+		title.setFontScale(5);
+
 		jump.addListener(new InputListener(){
-			@Override
-			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-			}
 			@Override
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
 				if (dy == 0) {
@@ -63,7 +85,36 @@ public class Animation extends ApplicationAdapter {
 				return true;
 			}
 		});
+		incv.addListener(new InputListener(){
+			@Override
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				if (dx >= 15 && dx < 35) { //moving right
+					dx = dx + 5;
+				}
+				if (dx <= -15 && dx > -35) { //moving left
+					dx = dx - 5;
+				}
+				title.setText("Velocity: " + abs(dx));
+				return true;
+			}
+		});
+		decv.addListener(new InputListener(){
+			@Override
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				if (dx > 15 && dx <= 35) { //moving right
+					dx = dx - 5;
+				}
+				if (dx < -15 && dx >= -35) { //moving left
+					dx = dx + 5;
+				}
+				title.setText("Velocity: " + abs(dx));
+				return true;
+			}
+		});
 		stage.addActor(jump);
+		stage.addActor(incv);
+		stage.addActor(decv);
+		stage.addActor(title);
 	}
 
 	@Override
