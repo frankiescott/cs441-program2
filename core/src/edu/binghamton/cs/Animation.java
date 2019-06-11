@@ -30,6 +30,7 @@ public class Animation extends ApplicationAdapter {
 	int imgWidth, imgHeight;
 	float gravity;
 	ShapeRenderer shapeRenderer;
+	int health;
 
 	private Skin loadSkin() {
 		return new Skin(Gdx.files.internal("clean-crispy-ui.json"));
@@ -50,7 +51,9 @@ public class Animation extends ApplicationAdapter {
 		dx = 15;
 		dy = 0;
 		gravity = -4;
+
 		configureControlInterface();
+		health = 500;
 	}
 
 	private void configureControlInterface() {
@@ -137,6 +140,10 @@ public class Animation extends ApplicationAdapter {
 
 		if ((x > (w - imgWidth)) || (x < 0)) {
 			dx = -dx;
+			health = health - 50; //hitting the wall reduces health
+			if (health < 0) {
+				health = 500; //reset health bar when health reaches zero
+			}
 		}
 		if (y < 0) {
 			dy = 0;
@@ -145,7 +152,7 @@ public class Animation extends ApplicationAdapter {
 
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled); //I'm using the Filled ShapeType, but remember you have three of them
 		shapeRenderer.setColor(Color.RED);
-		shapeRenderer.rect(25, h - 100, 500, 50);
+		shapeRenderer.rect(25, h - 100, health, 50);
 		shapeRenderer.end();
 
 		batch.begin();
