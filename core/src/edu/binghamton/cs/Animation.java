@@ -31,6 +31,7 @@ public class Animation extends ApplicationAdapter {
 	float gravity;
 	ShapeRenderer shapeRenderer;
 	int health;
+	Label totalHealth;
 
 	private Skin loadSkin() {
 		return new Skin(Gdx.files.internal("clean-crispy-ui.json"));
@@ -51,9 +52,9 @@ public class Animation extends ApplicationAdapter {
 		dx = 15;
 		dy = 0;
 		gravity = -4;
+		health = 500;
 
 		configureControlInterface();
-		health = 500;
 	}
 
 	private void configureControlInterface() {
@@ -77,10 +78,16 @@ public class Animation extends ApplicationAdapter {
 		((TextButton) decv).getLabel().setFontScale(3);
 
 		final Label title = new Label("Velocity: " + abs(dx), skin,"default");
-		title.setSize(Gdx.graphics.getWidth(),rowHeight*2);
-		title.setPosition(0,Gdx.graphics.getHeight() - rowHeight*2);
+		title.setSize(Gdx.graphics.getWidth(),rowHeight*2 - title.getHeight()*2);
+		title.setPosition(0,Gdx.graphics.getHeight() - rowHeight);
 		title.setAlignment(Align.center);
-		title.setFontScale(5);
+		title.setFontScale(3);
+
+		totalHealth = new Label("Health: " + health + "/500", skin,"default");
+		totalHealth.setSize(Gdx.graphics.getWidth(),rowHeight*2);
+		totalHealth.setPosition(0,Gdx.graphics.getHeight() - rowHeight*2);
+		totalHealth.setAlignment(Align.center);
+		totalHealth.setFontScale(3);
 
 		jump.addListener(new InputListener(){
 			@Override
@@ -121,6 +128,7 @@ public class Animation extends ApplicationAdapter {
 		stage.addActor(incv);
 		stage.addActor(decv);
 		stage.addActor(title);
+		stage.addActor(totalHealth);
 	}
 
 	@Override
@@ -144,21 +152,24 @@ public class Animation extends ApplicationAdapter {
 			if (health < 0) {
 				health = 500; //reset health bar when health reaches zero
 			}
+			totalHealth.setText("Health: " + health + "/500");
 		}
 		if (y < 0) {
 			dy = 0;
 			y = 0;
 		}
 
-		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled); //I'm using the Filled ShapeType, but remember you have three of them
+		//health bar
+		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 		shapeRenderer.setColor(Color.RED);
-		shapeRenderer.rect(25, h - 100, health, 50);
+		shapeRenderer.rect(Gdx.graphics.getWidth() / 2 - 250, h - 100, health, 50);
 		shapeRenderer.end();
 
 		batch.begin();
 		batch.draw(img, x, y);
 		batch.end();
 
+		//used for control interface
 		stage.act();
 		stage.draw();
 	}
