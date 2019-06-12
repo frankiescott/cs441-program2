@@ -53,7 +53,18 @@ public class Animation extends ApplicationAdapter {
 			this.imgWidth = this.img.getWidth();
 		}
 
-		public boolean checkPlayerBoundary() {
+		public void updatePosition() {
+			this.x = this.x + this.dx;
+			this.y = this.y + this.dy;
+		}
+
+		public void render() {
+			batch.begin();
+			batch.draw(this.img, this.x, this.y);
+			batch.end();
+		}
+
+		public void updatePlayer() {
 			if ((this.x > (w - this.imgWidth)) || (this.x < 0)) {
 				this.dx = -this.dx;
 				this.health = this.health - 50; //hitting the wall reduces health
@@ -61,6 +72,15 @@ public class Animation extends ApplicationAdapter {
 					this.health = 500; //reset health bar when health reaches zero
 				}
 				totalHealth.setText("Health: " + this.health + "/500");
+			}
+			if (this.y < 0) {
+				this.dy = 0;
+				this.y = 0;
+			}
+		}
+		public void updateEnemy() {
+			if ((this.x > (w - this.imgWidth)) || (this.x < 0)) {
+				this.dx = -this.dx;
 			}
 			if (this.y < 0) {
 				this.dy = 0;
@@ -77,6 +97,7 @@ public class Animation extends ApplicationAdapter {
 		shapeRenderer = new ShapeRenderer();
 
 		player = new GameObject(0, 0, 15, 0, 500, "badlogic.jpg");
+		enemy = new GameObject(0, 0, 25, 0, 0, "enemy.jpg");
 		gravity = -4;
 
 		configureControlInterface();
@@ -168,10 +189,10 @@ public class Animation extends ApplicationAdapter {
 			player.dy = player.dy + gravity;
 		}
 
-		player.x = player.x + player.dx;
-		player.y = player.y + player.dy;
-
-		player.checkPlayerBoundary();
+		player.updatePosition();
+		enemy.updatePosition();
+		player.updatePlayer();
+		enemy.updateEnemy();
 
 		//health bar
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -179,9 +200,8 @@ public class Animation extends ApplicationAdapter {
 		shapeRenderer.rect(Gdx.graphics.getWidth() / 2 - 250, h - 100, player.health, 50);
 		shapeRenderer.end();
 
-		batch.begin();
-		batch.draw(player.img, player.x, player.y);
-		batch.end();
+		player.render();
+		enemy.render();
 
 		//used for control interface
 		stage.act();
