@@ -25,7 +25,6 @@ public class Animation extends ApplicationAdapter {
 	private Stage stage;
 
 	float w, h;
-	int imgWidth, imgHeight;
 	float gravity;
 	ShapeRenderer shapeRenderer;
 	Label totalHealth;
