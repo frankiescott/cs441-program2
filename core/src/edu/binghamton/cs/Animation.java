@@ -39,13 +39,18 @@ public class Animation extends ApplicationAdapter {
 		float x, y;
 		float dx, dy;
 		int health;
+		Texture img;
+		int imgWidth, imgHeight;
 
-		GameObject(int x, int y, int dx, int dy, int health) {
+		GameObject(int x, int y, int dx, int dy, int health, String img) {
 			this.x = (float) x;
 			this.y = (float) y;
 			this.dx = (float) dx;
 			this.dy = (float) dy;
 			this.health = health;
+			this.img = new Texture(img);
+			this.imgHeight = this.img.getHeight();
+			this.imgWidth = this.img.getWidth();
 		}
 	}
 
@@ -56,10 +61,7 @@ public class Animation extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(stage);
 		shapeRenderer = new ShapeRenderer();
 
-		img = new Texture("badlogic.jpg");
-		imgWidth = img.getWidth();
-		imgHeight = img.getHeight();
-		player = new GameObject(0, 0, 15, 0, 500);
+		player = new GameObject(0, 0, 15, 0, 500, "badlogic.jpg");
 		gravity = -4;
 
 		configureControlInterface();
@@ -154,7 +156,7 @@ public class Animation extends ApplicationAdapter {
 		player.x = player.x + player.dx;
 		player.y = player.y + player.dy;
 
-		if ((player.x > (w - imgWidth)) || (player.x < 0)) {
+		if ((player.x > (w - player.imgWidth)) || (player.x < 0)) {
 			player.dx = -player.dx;
 			player.health = player.health - 50; //hitting the wall reduces health
 			if (player.health < 0) {
@@ -174,7 +176,7 @@ public class Animation extends ApplicationAdapter {
 		shapeRenderer.end();
 
 		batch.begin();
-		batch.draw(img, player.x, player.y);
+		batch.draw(player.img, player.x, player.y);
 		batch.end();
 
 		//used for control interface
