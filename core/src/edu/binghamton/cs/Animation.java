@@ -24,17 +24,29 @@ public class Animation extends ApplicationAdapter {
 	Texture img;
 	private Stage stage;
 
-	float x, y;
-	float dx, dy;
 	float w, h;
 	int imgWidth, imgHeight;
 	float gravity;
 	ShapeRenderer shapeRenderer;
-	int health;
 	Label totalHealth;
-
+	GameObject player;
+	GameObject enemy;
 	private Skin loadSkin() {
 		return new Skin(Gdx.files.internal("clean-crispy-ui.json"));
+	}
+
+	class GameObject {
+		float x, y;
+		float dx, dy;
+		int health;
+
+		GameObject(int x, int y, int dx, int dy, int health) {
+			this.x = (float) x;
+			this.y = (float) y;
+			this.dx = (float) dx;
+			this.dy = (float) dy;
+			this.health = health;
+		}
 	}
 
 	@Override
@@ -47,12 +59,8 @@ public class Animation extends ApplicationAdapter {
 		img = new Texture("badlogic.jpg");
 		imgWidth = img.getWidth();
 		imgHeight = img.getHeight();
-		x = 0;
-		y = 0;
-		dx = 15;
-		dy = 0;
+		player = new GameObject(0, 0, 15, 0, 500);
 		gravity = -4;
-		health = 500;
 
 		configureControlInterface();
 	}
@@ -77,13 +85,13 @@ public class Animation extends ApplicationAdapter {
 		decv.setPosition(colWidth*10, 5);
 		((TextButton) decv).getLabel().setFontScale(3);
 
-		final Label title = new Label("Velocity: " + abs(dx), skin,"default");
+		final Label title = new Label("Velocity: " + abs(player.dx), skin,"default");
 		title.setSize(Gdx.graphics.getWidth(),rowHeight*2 - title.getHeight()*2);
 		title.setPosition(0,Gdx.graphics.getHeight() - rowHeight);
 		title.setAlignment(Align.center);
 		title.setFontScale(3);
 
-		totalHealth = new Label("Health: " + health + "/500", skin,"default");
+		totalHealth = new Label("Health: " + player.health + "/500", skin,"default");
 		totalHealth.setSize(Gdx.graphics.getWidth(),rowHeight*2);
 		totalHealth.setPosition(0,Gdx.graphics.getHeight() - rowHeight*2);
 		totalHealth.setAlignment(Align.center);
@@ -92,8 +100,8 @@ public class Animation extends ApplicationAdapter {
 		jump.addListener(new InputListener(){
 			@Override
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-				if (dy == 0) {
-					dy = dy + 70;
+				if (player.dy == 0) {
+					player.dy = player.dy + 70;
 				}
 				return true;
 			}
@@ -101,26 +109,26 @@ public class Animation extends ApplicationAdapter {
 		incv.addListener(new InputListener(){
 			@Override
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-				if (dx >= 15 && dx < 35) { //moving right
-					dx = dx + 5;
+				if (player.dx >= 15 && player.dx < 35) { //moving right
+					player.dx = player.dx + 5;
 				}
-				if (dx <= -15 && dx > -35) { //moving left
-					dx = dx - 5;
+				if (player.dx <= -15 && player.dx > -35) { //moving left
+					player.dx = player.dx - 5;
 				}
-				title.setText("Velocity: " + abs(dx));
+				title.setText("Velocity: " + abs(player.dx));
 				return true;
 			}
 		});
 		decv.addListener(new InputListener(){
 			@Override
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-				if (dx > 15 && dx <= 35) { //moving right
-					dx = dx - 5;
+				if (player.dx > 15 && player.dx <= 35) { //moving right
+					player.dx = player.dx - 5;
 				}
-				if (dx < -15 && dx >= -35) { //moving left
-					dx = dx + 5;
+				if (player.dx < -15 && player.dx >= -35) { //moving left
+					player.dx = player.dx + 5;
 				}
-				title.setText("Velocity: " + abs(dx));
+				title.setText("Velocity: " + abs(player.dx));
 				return true;
 			}
 		});
@@ -136,37 +144,37 @@ public class Animation extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 1, 1, (float) 0.5);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		if ((y <= 4) && (abs(dy) <= 4)) {
-			y = 0;
-			dy = 0;
+		if ((player.y <= 4) && (abs(player.dy) <= 4)) {
+			player.y = 0;
+			player.dy = 0;
 		} else {
-			dy = dy + gravity;
+			player.dy = player.dy + gravity;
 		}
 
-		x = x + dx;
-		y = y + dy;
+		player.x = player.x + player.dx;
+		player.y = player.y + player.dy;
 
-		if ((x > (w - imgWidth)) || (x < 0)) {
-			dx = -dx;
-			health = health - 50; //hitting the wall reduces health
-			if (health < 0) {
-				health = 500; //reset health bar when health reaches zero
+		if ((player.x > (w - imgWidth)) || (player.x < 0)) {
+			player.dx = -player.dx;
+			player.health = player.health - 50; //hitting the wall reduces health
+			if (player.health < 0) {
+				player.health = 500; //reset health bar when health reaches zero
 			}
-			totalHealth.setText("Health: " + health + "/500");
+			totalHealth.setText("Health: " + player.health + "/500");
 		}
-		if (y < 0) {
-			dy = 0;
-			y = 0;
+		if (player.y < 0) {
+			player.dy = 0;
+			player.y = 0;
 		}
 
 		//health bar
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 		shapeRenderer.setColor(Color.RED);
-		shapeRenderer.rect(Gdx.graphics.getWidth() / 2 - 250, h - 100, health, 50);
+		shapeRenderer.rect(Gdx.graphics.getWidth() / 2 - 250, h - 100, player.health, 50);
 		shapeRenderer.end();
 
 		batch.begin();
-		batch.draw(img, x, y);
+		batch.draw(img, player.x, player.y);
 		batch.end();
 
 		//used for control interface
