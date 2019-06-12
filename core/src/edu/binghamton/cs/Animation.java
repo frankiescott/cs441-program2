@@ -52,6 +52,21 @@ public class Animation extends ApplicationAdapter {
 			this.imgHeight = this.img.getHeight();
 			this.imgWidth = this.img.getWidth();
 		}
+
+		public boolean checkPlayerBoundary() {
+			if ((this.x > (w - this.imgWidth)) || (this.x < 0)) {
+				this.dx = -this.dx;
+				this.health = this.health - 50; //hitting the wall reduces health
+				if (this.health < 0) {
+					this.health = 500; //reset health bar when health reaches zero
+				}
+				totalHealth.setText("Health: " + this.health + "/500");
+			}
+			if (this.y < 0) {
+				this.dy = 0;
+				this.y = 0;
+			}
+		}
 	}
 
 	@Override
@@ -156,18 +171,7 @@ public class Animation extends ApplicationAdapter {
 		player.x = player.x + player.dx;
 		player.y = player.y + player.dy;
 
-		if ((player.x > (w - player.imgWidth)) || (player.x < 0)) {
-			player.dx = -player.dx;
-			player.health = player.health - 50; //hitting the wall reduces health
-			if (player.health < 0) {
-				player.health = 500; //reset health bar when health reaches zero
-			}
-			totalHealth.setText("Health: " + player.health + "/500");
-		}
-		if (player.y < 0) {
-			player.dy = 0;
-			player.y = 0;
-		}
+		player.checkPlayerBoundary();
 
 		//health bar
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
