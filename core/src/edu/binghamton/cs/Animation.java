@@ -64,6 +64,7 @@ public class Animation extends ApplicationAdapter {
 		}
 
 		public void updatePlayer() {
+			this.updatePosition();
 			if ((this.x > (w - this.imgWidth)) || (this.x < 0)) {
 				this.dx = -this.dx;
 				this.health = this.health - 50; //hitting the wall reduces health
@@ -78,6 +79,7 @@ public class Animation extends ApplicationAdapter {
 			}
 		}
 		public void updateEnemy() {
+			this.updatePosition();
 			if ((this.x > (w - this.imgWidth)) || (this.x < 0)) {
 				this.dx = -this.dx;
 			}
@@ -188,8 +190,6 @@ public class Animation extends ApplicationAdapter {
 			player.dy = player.dy + gravity;
 		}
 
-		player.updatePosition();
-		enemy.updatePosition();
 		player.updatePlayer();
 		enemy.updateEnemy();
 
