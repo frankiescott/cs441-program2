@@ -118,7 +118,7 @@ public class Animation extends ApplicationAdapter {
 		shapeRenderer = new ShapeRenderer();
 
 		player = new GameObject(0, 0, 15, 0, 500, "badlogic.jpg");
-		enemy = new GameObject(0, 0, 25, 0, 0, "enemy.jpg");
+		enemy = new GameObject(Gdx.graphics.getWidth()-100, 0, 25, 0, 0, "enemy.jpg");
 		gravity = -4;
 
 		configureControlInterface();
