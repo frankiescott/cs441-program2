@@ -63,21 +63,35 @@ public class Animation extends ApplicationAdapter {
 			batch.end();
 		}
 
+		public boolean isColliding(GameObject a, GameObject b) {
+			if ( (a.x < b.x + b.imgWidth) && (a.x + a.imgWidth > b.x) && (a.y < b.y + b.imgHeight) && (a.y + a.imgHeight > b.y) ) {
+				return true;
+			}
+			return false;
+		}
+
+		public void resetHealth() {
+			this.health = 500;
+		}
+
 		public void updatePlayer() {
 			this.updatePosition();
+			if (isColliding(player, enemy)) {
+				this.health = this.health - 5;
+				totalHealth.setText("Health: " + this.health + "/500");
+				if (this.health < 0) {
+					this.resetHealth();
+				}
+			}
 			if ((this.x > (w - this.imgWidth)) || (this.x < 0)) {
 				this.dx = -this.dx;
-				this.health = this.health - 50; //hitting the wall reduces health
-				if (this.health < 0) {
-					this.health = 500; //reset health bar when health reaches zero
-				}
-				totalHealth.setText("Health: " + this.health + "/500");
 			}
 			if (this.y < 0) {
 				this.dy = 0;
 				this.y = 0;
 			}
 		}
+
 		public void updateEnemy() {
 			this.updatePosition();
 			if ((this.x > (w - this.imgWidth)) || (this.x < 0)) {
