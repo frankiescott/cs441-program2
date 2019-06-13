@@ -75,6 +75,12 @@ public class Animation extends ApplicationAdapter {
 		}
 
 		public void updatePlayer() {
+			if ((this.y <= 4) && (abs(this.dy) <= 4)) {
+				this.y = 0;
+				this.dy = 0;
+			} else {
+				this.dy = this.dy + gravity;
+			}
 			this.updatePosition();
 			if (isColliding(player, enemy)) {
 				this.health = this.health - 5;
@@ -196,13 +202,6 @@ public class Animation extends ApplicationAdapter {
 	public void render () {
 		Gdx.gl.glClearColor(1, 1, 1, (float) 0.5);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		if ((player.y <= 4) && (abs(player.dy) <= 4)) {
-			player.y = 0;
-			player.dy = 0;
-		} else {
-			player.dy = player.dy + gravity;
-		}
 
 		player.updatePlayer();
 		enemy.updateEnemy();
