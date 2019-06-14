@@ -1,2 +1,10 @@
 # cs441-program2
-Simple animations
+I started by implementing the code within the animation and physics video tutorials provided by Professor Madden. Once I had a grasp on the basic concepts, I began going off-script to implement my own ideas.
+
+I started by tweaking the physics code to my liking: altering the velocity and gravity values, reparing buggy collisions, and restricting the player to one jump at a time. Once I dialed in the physics, I converted the anywhere-on-screen touch input for jumping to a button located in the bottom left corner of the application. This laid the groundwork for the control interface, which I expanded to include increase and decrease velocity buttons located in the bottom right corner of the application. I linked each button to a text label display in the top center of the application so the player can monitor their velocity at any given moment. I was able to learn how to implement a skin into the application to give the control interface an arcade-like feel.
+
+Despite the application being focused around animation and physics, I wanted it to be as game-like as possible, so I rendered a player health bar underneath the velocity text display. I also placed a text label display for the player's health underneath the health bar, this way the player is aware of their numerical health value instead of relying on the health bar itself. In order to dynamically animate the health bar, I altered the wall collision code to reduce the player's health upon collision and update the health bar accordingly; however, this lacks practicality as a game-like application since it is impossible to avoid colliding with the wall.
+
+I took the stock player image and inverted its colors to create an "enemy." Implementing another animated object with physics would have made the code extremely clunky, so I created a class called GameObject to encapsulate the values and actions of a game object, such as the player. Once the game object infrastructure was built, it was easy to generate an enemy object by instantiating a new GameObject with the enemy's values. 
+
+Once I had an actual enemy moving on-screen, I was able to remove the player's health reduction upon wall collision. I wrote a basic rectangular collision method to trigger the player's health reduction if the player and the enemy collide. 
