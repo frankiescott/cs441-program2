@@ -22,25 +22,31 @@ import static java.lang.Math.abs;
 public class Animation extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
-	private Stage stage;
-	private float scoreSeconds = 0f;
-	private float jumpSeconds = 0f;
+	private Stage stage; //used for control buttons
 
-	float w, h;
-	float gravity;
-	ShapeRenderer shapeRenderer;
-	Label totalHealth;
-	Label scoreDisplay;
-	Label highScoreDisplay;
-	Player player;
-	Enemy enemy;
-	int score;
-	int highScore;
+	private float scoreSeconds = 0f; //timer for score
+	private float jumpSeconds = 0f; //timer for enemy jumping
+
+	private float w, h;
+	private float gravity;
+
+	private ShapeRenderer shapeRenderer; //health bar
+
+	private Label totalHealth;
+	private Label scoreDisplay;
+	private Label highScoreDisplay;
+
+	private Player player;
+	private Enemy enemy;
+
+	private int score;
+	private int highScore;
 
 	private Skin loadSkin() {
 		return new Skin(Gdx.files.internal("clean-crispy-ui.json"));
 	}
 
+	//resets player health, resets player & enemy positions, resets score, and updates high score if necessary
 	public void resetGame() {
 		player.health = 500;
 		totalHealth.setText("Health: " + player.health + "/500");
@@ -51,28 +57,34 @@ public class Animation extends ApplicationAdapter {
 		this.score = 0;
 		player.x = 0;
 		player.y = 0;
-		enemy.x = Gdx.graphics.getWidth()-100;
+		enemy.x = Gdx.graphics.getWidth() - 100;
 		enemy.y = 0;
 	}
 
 	class Player extends GameObject {
-		int health;
+		int health; 
 
 		Player(int x, int y, int dx, int dy, String img, int health) {
 			super(x, y, dx, dy, img);
 			this.health = health;
 		}
 
+		//since the player has health, we need to override the update method to take care of damage
 		@Override
 		public void update() {
+			//jumping physics
 			if ((this.y <= 4) && (abs(this.dy) <= 4)) {
 				this.y = 0;
 				this.dy = 0;
 			} else {
 				this.dy = this.dy + gravity;
 			}
+
+			//update position on screen
 			this.x = this.x + this.dx;
 			this.y = this.y + this.dy;
+
+			//check if player is colliding with the enemy
 			if (isColliding(player, enemy)) {
 				if (this.health - 5 <= 0) {
 					resetGame();
@@ -81,9 +93,13 @@ public class Animation extends ApplicationAdapter {
 					totalHealth.setText("Health: " + this.health + "/500");
 				}
 			}
+
+			//wall collision
 			if ((this.x > (w - this.imgWidth)) || (this.x < 0)) {
 				this.dx = -this.dx;
 			}
+
+			//ground collision
 			if (this.y < 0) {
 				this.dy = 0;
 				this.y = 0;
@@ -99,6 +115,7 @@ public class Animation extends ApplicationAdapter {
 			this.jumpTimer = (int) (Math.random() * 5 + 2);
 		}
 
+		//generates a new random jump timer
 		public void updateJumpTimer() {
 			this.jumpTimer = (int) (Math.random() * 4 + 1);
 		}
@@ -111,6 +128,7 @@ public class Animation extends ApplicationAdapter {
 		}
 	}
 
+	//generic GameObject class
 	class GameObject {
 		float x, y;
 		float dx, dy;
@@ -141,17 +159,24 @@ public class Animation extends ApplicationAdapter {
 		}
 
 		public void update() {
+			//jumping physics
 			if ((this.y <= 4) && (abs(this.dy) <= 4)) {
 				this.y = 0;
 				this.dy = 0;
 			} else {
 				this.dy = this.dy + gravity;
 			}
+
+			//update position on screen
 			this.x = this.x + this.dx;
 			this.y = this.y + this.dy;
+
+			//wall collision
 			if ((this.x > (w - this.imgWidth)) || (this.x < 0)) {
 				this.dx = -this.dx;
 			}
+
+			//ground collision
 			if (this.y < 0) {
 				this.dy = 0;
 				this.y = 0;
@@ -164,11 +189,13 @@ public class Animation extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		stage = new Stage(new ScreenViewport());
 		Gdx.input.setInputProcessor(stage);
-		shapeRenderer = new ShapeRenderer();
+		shapeRenderer = new ShapeRenderer(); //used for health bar
 
+		//generate GameObjects
 		player = new Player(0, 0, 15, 0, "badlogic.jpg", 500);
 		enemy = new Enemy(Gdx.graphics.getWidth()-100, 0, 25, 0,"enemy.jpg");
 
+		//set game values
 		gravity = -4;
 		score = 0;
 		highScore = 0;
@@ -178,6 +205,8 @@ public class Animation extends ApplicationAdapter {
 
 	private void configureControlInterface() {
 		Skin skin = loadSkin();
+
+		//used to position elements on screen
 		int rowHeight = Gdx.graphics.getWidth() / 12;
 		int colWidth = Gdx.graphics.getWidth() / 12;
 
@@ -270,7 +299,7 @@ public class Animation extends ApplicationAdapter {
 	}
 
 	@Override
-	public void render () {
+	public void render() {
 		scoreSeconds = scoreSeconds + Gdx.graphics.getRawDeltaTime();
 		if (scoreSeconds > 1) {
 			scoreSeconds = scoreSeconds - 1;
