@@ -32,8 +32,8 @@ public class Animation extends ApplicationAdapter {
 	Label totalHealth;
 	Label scoreDisplay;
 	Label highScoreDisplay;
-	GameObject player;
-	GameObject enemy;
+	Player player;
+	Enemy enemy;
 	int score;
 	int highScore;
 
@@ -55,56 +55,24 @@ public class Animation extends ApplicationAdapter {
 		enemy.y = 0;
 	}
 
-	class GameObject {
-		float x, y;
-		float dx, dy;
+	class Player extends GameObject {
 		int health;
-		Texture img;
-		int imgWidth, imgHeight;
-		int jumpTimer;
 
-		GameObject(int x, int y, int dx, int dy, int health, String img) {
-			this.x = (float) x;
-			this.y = (float) y;
-			this.dx = (float) dx;
-			this.dy = (float) dy;
+		Player(int x, int y, int dx, int dy, String img, int health) {
+			super(x, y, dx, dy, img);
 			this.health = health;
-			this.img = new Texture(img);
-			this.imgHeight = this.img.getHeight();
-			this.imgWidth = this.img.getWidth();
-			this.jumpTimer = (int) (Math.random() * 5 + 2);
 		}
 
-		public void updateJumpTimer() {
-			this.jumpTimer = (int) (Math.random() * 4 + 1);
-		}
-
-		public void updatePosition() {
-			this.x = this.x + this.dx;
-			this.y = this.y + this.dy;
-		}
-
-		public void render() {
-			batch.begin();
-			batch.draw(this.img, this.x, this.y);
-			batch.end();
-		}
-
-		public boolean isColliding(GameObject a, GameObject b) {
-			if ( (a.x < b.x + b.imgWidth) && (a.x + a.imgWidth > b.x) && (a.y < b.y + b.imgHeight) && (a.y + a.imgHeight > b.y) ) {
-				return true;
-			}
-			return false;
-		}
-
-		public void updatePlayer() {
+		@Override
+		public void update() {
 			if ((this.y <= 4) && (abs(this.dy) <= 4)) {
 				this.y = 0;
 				this.dy = 0;
 			} else {
 				this.dy = this.dy + gravity;
 			}
-			this.updatePosition();
+			this.x = this.x + this.dx;
+			this.y = this.y + this.dy;
 			if (isColliding(player, enemy)) {
 				if (this.health - 5 <= 0) {
 					resetGame();
@@ -121,15 +89,66 @@ public class Animation extends ApplicationAdapter {
 				this.y = 0;
 			}
 		}
+	}
 
-		public void updateEnemy() {
+	class Enemy extends GameObject {
+		int jumpTimer;
+
+		Enemy(int x, int y, int dx, int dy, String img) {
+			super(x, y, dx, dy, img);
+			this.jumpTimer = (int) (Math.random() * 5 + 2);
+		}
+
+		public void updateJumpTimer() {
+			this.jumpTimer = (int) (Math.random() * 4 + 1);
+		}
+
+		public void jump() {
+			if (this.dy == 0) {
+				this.dy = this.dy + 80;
+			}
+			this.updateJumpTimer();
+		}
+	}
+
+	class GameObject {
+		float x, y;
+		float dx, dy;
+		Texture img;
+		int imgWidth, imgHeight;
+
+		GameObject(int x, int y, int dx, int dy, String img) {
+			this.x = (float) x;
+			this.y = (float) y;
+			this.dx = (float) dx;
+			this.dy = (float) dy;
+			this.img = new Texture(img);
+			this.imgHeight = this.img.getHeight();
+			this.imgWidth = this.img.getWidth();
+		}
+
+		public void render() {
+			batch.begin();
+			batch.draw(this.img, this.x, this.y);
+			batch.end();
+		}
+
+		public boolean isColliding(GameObject a, GameObject b) {
+			if ( (a.x < b.x + b.imgWidth) && (a.x + a.imgWidth > b.x) && (a.y < b.y + b.imgHeight) && (a.y + a.imgHeight > b.y) ) {
+				return true;
+			}
+			return false;
+		}
+
+		public void update() {
 			if ((this.y <= 4) && (abs(this.dy) <= 4)) {
 				this.y = 0;
 				this.dy = 0;
 			} else {
 				this.dy = this.dy + gravity;
 			}
-			this.updatePosition();
+			this.x = this.x + this.dx;
+			this.y = this.y + this.dy;
 			if ((this.x > (w - this.imgWidth)) || (this.x < 0)) {
 				this.dx = -this.dx;
 			}
@@ -138,14 +157,6 @@ public class Animation extends ApplicationAdapter {
 				this.y = 0;
 			}
 		}
-
-		public void jump() {
-			if (this.dy == 0) {
-				this.dy = this.dy + 85;
-			}
-			this.updateJumpTimer();
-		}
-
 	}
 
 	@Override
@@ -155,8 +166,9 @@ public class Animation extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(stage);
 		shapeRenderer = new ShapeRenderer();
 
-		player = new GameObject(0, 0, 15, 0, 500, "badlogic.jpg");
-		enemy = new GameObject(Gdx.graphics.getWidth()-100, 0, 25, 0, 0, "enemy.jpg");
+		player = new Player(0, 0, 15, 0, "badlogic.jpg", 500);
+		enemy = new Enemy(Gdx.graphics.getWidth()-100, 0, 25, 0,"enemy.jpg");
+
 		gravity = -4;
 		score = 0;
 		highScore = 0;
@@ -274,8 +286,8 @@ public class Animation extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 1, 1, (float) 0.5);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		player.updatePlayer();
-		enemy.updateEnemy();
+		player.update();
+		enemy.update();
 
 		//health bar
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
