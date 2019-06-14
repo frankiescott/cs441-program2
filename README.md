@@ -13,9 +13,15 @@ Once I had an actual enemy moving on-screen, I was able to remove the damage upo
 
 # Development schedule
 June 8th  - Initialized project
+
 June 9th  - Implemented animation and physics with a working jump button
+
 June 10th - Created increase and decrease velocity controls
+
 June 11th - Generated health display and triggered player damage upon wall collision
+
 June 12th - Encapsulated game object attributes and actions within a GameObject class and spawned a moving enemy
+
 June 13th - Altered GameObject and evaluated player/enemy collision
+
 June 14th - Added score counter and high score tracking with game resets upon the player reaching zero health
