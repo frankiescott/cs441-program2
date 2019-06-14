@@ -20,8 +20,8 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import static java.lang.Math.abs;
 
 public class Animation extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
+	private SpriteBatch batch;
+	private Texture img;
 	private Stage stage; //used for control buttons
 
 	private float scoreSeconds = 0f; //timer for score
@@ -32,6 +32,7 @@ public class Animation extends ApplicationAdapter {
 
 	private ShapeRenderer shapeRenderer; //health bar
 
+	//interface labels
 	private Label totalHealth;
 	private Label scoreDisplay;
 	private Label highScoreDisplay;
@@ -62,7 +63,7 @@ public class Animation extends ApplicationAdapter {
 	}
 
 	class Player extends GameObject {
-		int health; 
+		int health;
 
 		Player(int x, int y, int dx, int dy, String img, int health) {
 			super(x, y, dx, dy, img);
@@ -124,7 +125,7 @@ public class Animation extends ApplicationAdapter {
 			if (this.dy == 0) {
 				this.dy = this.dy + 80;
 			}
-			this.updateJumpTimer();
+			this.updateJumpTimer(); //once the enemy jumps, we need a new random jump timer
 		}
 	}
 
@@ -306,6 +307,7 @@ public class Animation extends ApplicationAdapter {
 			updateScore();
 		}
 
+		//code for enemy jumping randomly
 		jumpSeconds = jumpSeconds + Gdx.graphics.getRawDeltaTime();
 		if (jumpSeconds > enemy.jumpTimer) {
 			jumpSeconds = jumpSeconds - enemy.jumpTimer;
@@ -315,6 +317,7 @@ public class Animation extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 1, 1, (float) 0.5);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		//updates positions and health if necessary
 		player.update();
 		enemy.update();
 
@@ -324,6 +327,7 @@ public class Animation extends ApplicationAdapter {
 		shapeRenderer.rect(Gdx.graphics.getWidth() / 2 - 250, h - 100, player.health, 50);
 		shapeRenderer.end();
 
+		//renders objects on screen
 		player.render();
 		enemy.render();
 
