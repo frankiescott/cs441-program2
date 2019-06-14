@@ -236,10 +236,6 @@ public class Animation extends ApplicationAdapter {
 		this.score = this.score + 1;
 		scoreDisplay.setText("Score: " + this.score);
 	}
-	public void resetScore() {
-		this.score = 0;
-		scoreDisplay.setText("Score: " + this.score);
-	}
 
 	@Override
 	public void render () {
