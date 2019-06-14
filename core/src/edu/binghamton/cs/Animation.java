@@ -23,13 +23,18 @@ public class Animation extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
 	private Stage stage;
+	private float seconds = 0f;
+	private float period = 1f;
 
 	float w, h;
 	float gravity;
 	ShapeRenderer shapeRenderer;
 	Label totalHealth;
+	Label scoreDisplay;
 	GameObject player;
 	GameObject enemy;
+	int score;
+
 	private Skin loadSkin() {
 		return new Skin(Gdx.files.internal("clean-crispy-ui.json"));
 	}
@@ -120,6 +125,7 @@ public class Animation extends ApplicationAdapter {
 		player = new GameObject(0, 0, 15, 0, 500, "badlogic.jpg");
 		enemy = new GameObject(Gdx.graphics.getWidth()-100, 0, 25, 0, 0, "enemy.jpg");
 		gravity = -4;
+		score = 0;
 
 		configureControlInterface();
 	}
@@ -149,6 +155,12 @@ public class Animation extends ApplicationAdapter {
 		title.setPosition(0,Gdx.graphics.getHeight() - rowHeight);
 		title.setAlignment(Align.center);
 		title.setFontScale(3);
+
+		scoreDisplay = new Label("Score: " + this.score, skin,"default");
+		scoreDisplay.setSize(Gdx.graphics.getWidth(),rowHeight*2 - title.getHeight()*2);
+		scoreDisplay.setPosition(20,Gdx.graphics.getHeight());
+		scoreDisplay.setAlignment(Align.left);
+		scoreDisplay.setFontScale(3);
 
 		totalHealth = new Label("Health: " + player.health + "/500", skin,"default");
 		totalHealth.setSize(Gdx.graphics.getWidth(),rowHeight*2);
@@ -196,10 +208,26 @@ public class Animation extends ApplicationAdapter {
 		stage.addActor(decv);
 		stage.addActor(title);
 		stage.addActor(totalHealth);
+		stage.addActor(scoreDisplay);
+	}
+
+	public void updateScore() {
+		this.score = this.score + 1;
+		scoreDisplay.setText("Score: " + this.score);
+	}
+	public void resetScore() {
+		this.score = 0;
+		scoreDisplay.setText("Score: " + this.score);
 	}
 
 	@Override
 	public void render () {
+		seconds = seconds + Gdx.graphics.getRawDeltaTime();
+		if (seconds > period) {
+			seconds = seconds - period;
+			updateScore();
+		}
+
 		Gdx.gl.glClearColor(1, 1, 1, (float) 0.5);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
