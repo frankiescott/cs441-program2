@@ -41,6 +41,19 @@ public class Animation extends ApplicationAdapter {
 		return new Skin(Gdx.files.internal("clean-crispy-ui.json"));
 	}
 
+	public void resetGame() {
+		player.health = 500;
+		if (this.score > this.highScore) {
+			this.highScore = this.score;
+			highScoreDisplay.setText("High Score: " + this.highScore);
+		}
+		this.score = 0;
+		player.x = 0;
+		player.y = 0;
+		enemy.x = Gdx.graphics.getWidth()-100;
+		enemy.y = 0;
+	}
+
 	class GameObject {
 		float x, y;
 		float dx, dy;
@@ -77,10 +90,6 @@ public class Animation extends ApplicationAdapter {
 			return false;
 		}
 
-		public void resetHealth() {
-			this.health = 500;
-		}
-
 		public void updatePlayer() {
 			if ((this.y <= 4) && (abs(this.dy) <= 4)) {
 				this.y = 0;
@@ -90,10 +99,11 @@ public class Animation extends ApplicationAdapter {
 			}
 			this.updatePosition();
 			if (isColliding(player, enemy)) {
-				this.health = this.health - 5;
-				totalHealth.setText("Health: " + this.health + "/500");
-				if (this.health < 0) {
-					this.resetHealth();
+				if (this.health - 5 <= 0) {
+					resetGame();
+				} else {
+					this.health = this.health - 5;
+					totalHealth.setText("Health: " + this.health + "/500");
 				}
 			}
 			if ((this.x > (w - this.imgWidth)) || (this.x < 0)) {
