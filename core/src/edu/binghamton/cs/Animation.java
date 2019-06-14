@@ -43,6 +43,7 @@ public class Animation extends ApplicationAdapter {
 
 	public void resetGame() {
 		player.health = 500;
+		totalHealth.setText("Health: " + player.health + "/500");
 		if (this.score > this.highScore) {
 			this.highScore = this.score;
 			highScoreDisplay.setText("High Score: " + this.highScore);
