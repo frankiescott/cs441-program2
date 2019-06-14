@@ -31,9 +31,11 @@ public class Animation extends ApplicationAdapter {
 	ShapeRenderer shapeRenderer;
 	Label totalHealth;
 	Label scoreDisplay;
+	Label highScoreDisplay;
 	GameObject player;
 	GameObject enemy;
 	int score;
+	int highScore;
 
 	private Skin loadSkin() {
 		return new Skin(Gdx.files.internal("clean-crispy-ui.json"));
@@ -126,6 +128,7 @@ public class Animation extends ApplicationAdapter {
 		enemy = new GameObject(Gdx.graphics.getWidth()-100, 0, 25, 0, 0, "enemy.jpg");
 		gravity = -4;
 		score = 0;
+		highScore = 0;
 
 		configureControlInterface();
 	}
@@ -157,10 +160,16 @@ public class Animation extends ApplicationAdapter {
 		title.setFontScale(3);
 
 		scoreDisplay = new Label("Score: " + this.score, skin,"default");
-		scoreDisplay.setSize(Gdx.graphics.getWidth(),rowHeight*2 - title.getHeight()*2);
+		scoreDisplay.setSize(Gdx.graphics.getWidth() / 2,rowHeight*2 - title.getHeight()*2);
 		scoreDisplay.setPosition(20,Gdx.graphics.getHeight());
 		scoreDisplay.setAlignment(Align.left);
 		scoreDisplay.setFontScale(3);
+
+		highScoreDisplay = new Label("High Score: " + this.highScore, skin,"default");
+		highScoreDisplay.setSize(Gdx.graphics.getWidth() / 2,rowHeight*2 - title.getHeight()*2);
+		highScoreDisplay.setPosition(Gdx.graphics.getWidth() / 2 - 100,Gdx.graphics.getHeight());
+		highScoreDisplay.setAlignment(Align.right);
+		highScoreDisplay.setFontScale(3);
 
 		totalHealth = new Label("Health: " + player.health + "/500", skin,"default");
 		totalHealth.setSize(Gdx.graphics.getWidth(),rowHeight*2);
@@ -209,6 +218,7 @@ public class Animation extends ApplicationAdapter {
 		stage.addActor(title);
 		stage.addActor(totalHealth);
 		stage.addActor(scoreDisplay);
+		stage.addActor(highScoreDisplay);
 	}
 
 	public void updateScore() {
