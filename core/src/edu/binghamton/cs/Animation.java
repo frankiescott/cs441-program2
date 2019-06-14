@@ -23,8 +23,8 @@ public class Animation extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
 	private Stage stage;
-	private float seconds = 0f;
-	private float period = 1f;
+	private float scoreSeconds = 0f;
+	private float jumpSeconds = 0f;
 
 	float w, h;
 	float gravity;
@@ -61,6 +61,7 @@ public class Animation extends ApplicationAdapter {
 		int health;
 		Texture img;
 		int imgWidth, imgHeight;
+		int jumpTimer;
 
 		GameObject(int x, int y, int dx, int dy, int health, String img) {
 			this.x = (float) x;
@@ -71,6 +72,11 @@ public class Animation extends ApplicationAdapter {
 			this.img = new Texture(img);
 			this.imgHeight = this.img.getHeight();
 			this.imgWidth = this.img.getWidth();
+			this.jumpTimer = (int) (Math.random() * 5 + 2);
+		}
+
+		public void updateJumpTimer() {
+			this.jumpTimer = (int) (Math.random() * 4 + 1);
 		}
 
 		public void updatePosition() {
@@ -117,6 +123,12 @@ public class Animation extends ApplicationAdapter {
 		}
 
 		public void updateEnemy() {
+			if ((this.y <= 4) && (abs(this.dy) <= 4)) {
+				this.y = 0;
+				this.dy = 0;
+			} else {
+				this.dy = this.dy + gravity;
+			}
 			this.updatePosition();
 			if ((this.x > (w - this.imgWidth)) || (this.x < 0)) {
 				this.dx = -this.dx;
@@ -126,6 +138,14 @@ public class Animation extends ApplicationAdapter {
 				this.y = 0;
 			}
 		}
+
+		public void jump() {
+			if (this.dy == 0) {
+				this.dy = this.dy + 85;
+			}
+			this.updateJumpTimer();
+		}
+
 	}
 
 	@Override
@@ -239,10 +259,16 @@ public class Animation extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		seconds = seconds + Gdx.graphics.getRawDeltaTime();
-		if (seconds > period) {
-			seconds = seconds - period;
+		scoreSeconds = scoreSeconds + Gdx.graphics.getRawDeltaTime();
+		if (scoreSeconds > 1) {
+			scoreSeconds = scoreSeconds - 1;
 			updateScore();
+		}
+
+		jumpSeconds = jumpSeconds + Gdx.graphics.getRawDeltaTime();
+		if (jumpSeconds > enemy.jumpTimer) {
+			jumpSeconds = jumpSeconds - enemy.jumpTimer;
+			enemy.jump();
 		}
 
 		Gdx.gl.glClearColor(1, 1, 1, (float) 0.5);
